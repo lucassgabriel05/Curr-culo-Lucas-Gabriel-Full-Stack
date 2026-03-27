@@ -1,33 +1,43 @@
 window.onload = function() {
-    const btn = document.getElementById('baixar-curriculo');
-    const areaCurriculo = document.getElementById('caixa_principal');
+  const btn = document.getElementById('baixar-curriculo');
+  const areaCurriculo = document.getElementById('caixa_principal');
 
-    if (btn) {
-        btn.addEventListener('click', function() {
-            console.log("Iniciando geração do PDF...");
+  if (btn) {
+    btn.addEventListener('click', function() {
 
-            // Usamos a sintaxe correta para a versão nova do jsPDF
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'pt', 'a4');
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'pt', 'a4');
 
-            html2canvas(areaCurriculo, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                
-                const pdfWidth = doc.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      html2canvas(areaCurriculo, {
+        scale: 3,
+        useCORS: true
+      }).then(canvas => {
 
-                doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                doc.save("Curriculo_Lucas_Gabriel_FullStack.pdf");
-                console.log("PDF Gerado com sucesso!");
-            }).catch(err => {
-                console.error("Erro no html2canvas:", err);
-            });
-        });
-    } else {
-        console.error("Botão 'baixar-curriculo' não encontrado no HTML.");
-    }
+        const imgData = canvas.toDataURL('image/png');
+
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = doc.internal.pageSize.getHeight();
+
+        const imgWidth = pdfWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // primeira página
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+
+        // páginas extras
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+
+        doc.save("Curriculo_Lucas_Gabriel_FullStack.pdf");
+      });
+    });
+  }
 };
