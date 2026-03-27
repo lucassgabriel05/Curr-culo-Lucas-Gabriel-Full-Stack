@@ -1,39 +1,26 @@
-window.onload = function () {
-  const btn = document.getElementById("baixar-curriculo");
+document.getElementById('baixar-curriculo').addEventListener('click', () => {
+    
+    const elemento = document.getElementById('caixa_principal');
 
-  if (btn) {
-    btn.addEventListener("click", function () {
-      const elemento = document.getElementById("caixa_principal");
-
-      const larguraOriginal = elemento.style.width;
-
-      // força tamanho A4 temporário
-      elemento.style.width = "210mm";
-
-      const opcoes = {
-        margin: 0,
-        filename: "Curriculo_Lucas_Gabriel_FullStack.pdf",
-        html2canvas: {
-          scale: 2,
-          useCORS: true
+    
+    const opcoes = {
+        margin: [10, 10, 10, 10], 
+        filename: 'Curriculo_Lucas_Gabriel_FullStack.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 1.7,       
+            useCORS: true,    
+            windowWidth: 900, 
+            scrollY: 0,       
+            scrollX: 0
         },
-        jsPDF: {
-          unit: "mm",
-          format: "a4",
-          orientation: "portrait"
-        },
-        pagebreak: {
-          mode: ["css", "legacy"]
+        jsPDF: { 
+            unit: 'pt', 
+            format: 'a4', 
+            orientation: 'portrait' 
         }
-      };
+    };
 
-      html2pdf()
-        .set(opcoes)
-        .from(elemento)
-        .save()
-        .then(() => {
-          elemento.style.width = larguraOriginal;
-        });
-    });
-  }
-};
+    
+    html2pdf().set(opcoes).from(elemento).save();
+});
